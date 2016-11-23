@@ -1,0 +1,69 @@
+<html>
+	<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+	</head>
+	<body>
+		<form id="userForm">
+	<input type="text" id="username" />
+	<input type="SUBMIT" id="send" value="send" />
+</form>
+<button id="button"> Message</button>
+	<script>
+
+	var socket=io.connect();
+		var users=[];
+    var $userForm = $('#userForm');
+		var $username = $('#username');
+		var $button=$('#button');
+
+
+		    $userForm.submit(function(e) {
+		        e.preventDefault();
+		        socket.emit('newUser', $username.val(),function(data) {
+
+		        });
+		        $username.val('');
+		    });
+
+var mine;
+
+	// listner for get Users
+	socket.on('getUsers', function (data) {
+			console.log(data);
+			// t.push(data.id)
+			users=data;
+			mine=socket.id;
+		})
+
+
+	// SendMessage > message format { sender:, message:, reciever:}
+  $button.click(function() {
+// console.log(mine);
+// console.log(users);
+// console.log(users[1].id);
+  	var $data ={ to:users[1].id ,
+							   message:'developing',
+							   from:mine
+							};
+  	var $dat ={ to:users[3].id ,
+							   message:'do it',
+							   from:mine
+							};
+
+	socket.emit('sendMessage',$data );
+	socket.emit('sendMessage1',$dat );
+   socket.on('newMessage',function(data) {
+       console.log(data.message);
+
+       });
+			 socket.on('newMessage1',function(data) {
+		       console.log(data.message);
+
+		       });
+});
+
+
+	</script>
+	</body>
+</html>
